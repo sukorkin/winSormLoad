@@ -15,7 +15,7 @@ conn.create_connection()
 # cur = connection.cursor()
 # cur.arraysize = config.arraysize
 
-fd = open('sql/oracleTest1.sql', 'r')
+fd = open('sql/oracleTest.sql', 'r')
 sqlNameLine = fd.readline()
 sqlFile = fd.read()
 fd.close()
