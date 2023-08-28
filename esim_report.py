@@ -77,7 +77,7 @@ def create_xlsx(df):
     worksheet = writer.sheets['Лист1']
     cell_range = xlsxwriter.utility.xl_range(0, 0, len(df.index), len(df.columns)-1)
     header = [{'header': 'Итог'}, {'header': 'Диллер'}]
-    worksheet.add_table(cell_range, {'header_row': True,'columns':header})
+    worksheet.add_table(cell_range, {'header_row': True, 'columns': header})
     worksheet.autofit()
     writer.close()
 
@@ -88,16 +88,25 @@ def send_report(message, *, xlsx=False):
     start_date = today - timedelta(days=weekday + 7)
     end_date = start_date + timedelta(days=6)
     fromaddr = "Operreport_daily@mobile-win.ru"
+    # toaddr = ['Sergey.Korkin@ic-group.ru']
     toaddr = ['Sergey.Korkin@ic-group.ru', 'Veranika.Tyan@ic-group.ru']
+    # toaddr = ['Sergey.Korkin@ic-group.ru', 'Veranika.Tyan@ic-group.ru',
+    #           'Aleksandr.Egorov@ic-group.ru', 'Arsen.Nabiev@ic-group.ru',
+    #           'Ludmila.Tuchkova@ic-group.ru', 'Ekaterina.Burova@ic-group.ru']
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = ", ".join(toaddr)
     msg['Subject'] = f'Отчет по подключениям eSIM ВИН мобайл c {start_date.strftime("%d.%m.%Y")} по {end_date.strftime("%d.%m.%Y")}'
     body = message
     msg.attach(MIMEText(body, 'plain'))
-    #rep = MIMEBase('application', 'octet-stream')
-    #rep.add_header('Content-Disposition', 'attachment; filename="eSim_report.xlsx"')
-    #msg.attach(rep)
+    # rep = MIMEBase('application', 'octet-stream')
+    fp = open("reports/Esim.xlsx", 'rb')
+    rep = MIMEBase('application', 'vnd.ms-excel')
+    rep.set_payload(fp.read())
+    fp.close()
+    encoders.encode_base64(rep)
+    rep.add_header('Content-Disposition', 'attachment; filename="Esim.xlsx"')
+    msg.attach(rep)
     s = smtplib.SMTP('mail.ic-group.ru', 25)
     s.starttls()
     text = msg.as_string()

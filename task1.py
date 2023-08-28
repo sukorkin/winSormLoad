@@ -39,8 +39,8 @@ def start_task():
         df['ACTIVATION_IMSI'] = df['ACTIVATION_IMSI'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
         df['ACTIVATION_ICC'] = df['ACTIVATION_ICC'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
         df['IMSI'] = df['IMSI'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
-        df['ICC'] = df['ICC'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
-        df['SALE_POINT'] = df['SALE_POINT'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
+        # df['ICC'] = df['ICC'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
+        # df['SALE_POINT'] = df['SALE_POINT'].apply(lambda x: np.NaN if pd.isnull(x) else int(x))
         return df
 
     def get_nomenclature(df):
