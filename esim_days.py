@@ -13,7 +13,6 @@ conn.create_connection()
 
 def start_task():
     def get_full_table():
-        '''данная функция возвращает все данные из таблицы KTK_DWH.DIM_SUBSCRIBER за текущий месяц'''
         query = '''
                 select d.dlr_name, trunc(uh.stime) stime,  uh.usi_id cnt
                 from usi_history uh
@@ -49,7 +48,6 @@ def start_task():
         return df
 
     def get_esim(df):
-        '''создаем сводную таблицу по листу (Номенклатура)'''
         esim = df.pivot_table(values='CNT', columns='STIME', index=['DLR_NAME'],
                                       aggfunc='count', fill_value=0, margins=True, margins_name='Итог')
         return esim
@@ -57,29 +55,29 @@ def start_task():
     def create_worksheet(writer, df, sheet_name):
         df = df.reset_index()
         df.to_excel(writer, sheet_name=sheet_name, index=False)
-        worksheet = writer.sheets[sheet_name]  # получаем лист с которым работаем
+        worksheet = writer.sheets[sheet_name]
         cell_range = xlsxwriter.utility.xl_range(0, 0, len(df.index),
-                                                 len(df.columns) - 1)  # создаем диапазон для таблицы
-        header = [{'header': name} for name in df.columns]  # генерируем заголовки для таблицы
+                                                 len(df.columns) - 1)
+        header = [{'header': name} for name in df.columns]
         worksheet.add_table(cell_range, {'header_row': True,
-                                         'columns': header})  # создаем таблицу в выбраном диапазоне с нужными заголовками
+                                         'columns': header})
         if sheet_name == 'Детали':
             workbook = writer.book
             format = workbook.add_format({'num_format': '0'})
             worksheet.set_column('AF:AI', None, format)
-        worksheet.autofit()  # устанавливаем авторазмер для столбцов листа
+        worksheet.autofit()
 
     def write_xlsx_file(esim, df):
-        writer = pd.ExcelWriter('reports/Esim.xlsx', engine='xlsxwriter')  # !!! тут можно изменить название файла
+        writer = pd.ExcelWriter('reports/Esim.xlsx', engine='xlsxwriter')
         create_worksheet(writer, esim, 'Esim')
         # create_worksheet(writer, df, 'Детали')
         writer.close()
         print('-- Excel file created successful! --')
 
-    df = get_full_table()  # получили данные
+    df = get_full_table()
     df = prepare_data(df)
-    esim = get_esim(df)  # построили таблицу для листа Номенклатура
-    write_xlsx_file(esim, df)  # формируем Excel файл
+    esim = get_esim(df)
+    write_xlsx_file(esim, df)
 
 
 start_task()
