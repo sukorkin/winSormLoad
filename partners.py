@@ -19,7 +19,7 @@ def start_task():
                 inner join ktk_dwh.dim_subscriber ds2 on ds2.msisdn = pbp.sender
                 inner join ktk_dwh.dim_client dc on ds2.clnt_id = dc.ext_id
                 left join ktk.partner_bonus_program_ap_log@ktkdb2 pbpa on pbp.sender =  pbpa.sender and receipt_date < date_m
-                where trunc(receipt_date) between trunc(sysdate, 'mm')and trunc(sysdate, 'DD') - 1/86400
+                where trunc(receipt_date) between add_months(trunc(sysdate,'mm'),-1) and last_day(add_months(trunc(sysdate,'mm'),-1)) + 86399/86400
                 '''
         df = conn.get_query(query)
         return df
