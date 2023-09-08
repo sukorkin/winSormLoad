@@ -46,10 +46,10 @@ def start_task():
         worksheet = writer.sheets[sheet_name]
         cell_range = xlsxwriter.utility.xl_range(0, 0, len(df.index),
                                                  len(df.columns) - 1)
-        header = [{'header': name} for name in df.columns if name != 'TYPE']
-        header.insert(0, {'header': ' '})
-        worksheet.add_table(cell_range, {'header_row': True,
-                                         'columns': header})
+        header = [{'header': name} for name in df.columns]
+        header[0] = {'header': ' '}
+        # header.insert(0, {'header': ' '})
+        worksheet.add_table(cell_range, {'header_row': True, 'columns': header})
         if sheet_name == 'Детали':
             workbook = writer.book
             format = workbook.add_format({'num_format': '0'})
@@ -57,7 +57,8 @@ def start_task():
         worksheet.autofit()
 
     def write_xlsx_file(esim, df, prev_month):
-        rep_name = 'reports/newReport' + '_' + today.strftime("%Y%m%d_%H%M") + '.xlsx'
+        rep_name = 'reports/newReport' + '_' + prev_month.strftime("%Y%m") + '.xlsx'
+        # rep_name = 'reports/newReport' + '_' + today.strftime("%Y%m%d_%H%M") + '.xlsx'
         writer = pd.ExcelWriter(rep_name, engine='xlsxwriter')
         create_worksheet(writer, esim, prev_month.strftime('%B %Y'))
         # create_worksheet(writer, df, 'Детали')
