@@ -9,16 +9,31 @@ from connector import Connector
 def start_task():
     def get_full_table():
         query = '''
+                with bonus as(
+                select par.sender, par.message_text, 
+                      case when s.trpl_id=103  then 50 else 0 end as bonus
+                from (
+                    select *
+                    from ktk.partner_bonus_program@ktkdb2
+                    where receipt_date>=add_months(trunc(sysdate,'mm'),-1)) par
+                inner join phone@ktkdb2 p                 on par.message_text=p.msisdn
+                inner join subs_history@ktkdb2 s          on p.phone_id=s.phone_id  and s.trpl_id in (103,107,102,85) and s.num_history=1 ---- по первой версии найдем номер
+                inner join subscriber@ktkdb2 su           on su.SUBS_ID=s.SUBS_ID   and trunc(su.ACTIVATION_DATE,'mm')= add_months(trunc(sysdate,'mm'),-1)  and ABS(par.RECEIPT_DATE-su.ACTIVATION_DATE)*24 <= 72 
+                inner join subs_history@ktkdb2 s1         on s.subs_id=s1.subs_id   and s1.etime>sysdate     and s1.stat_id!=3   ---- по последней поймем что абонент еще не закрыт
+                inner join subs_opt_data@ktkdb2 o         on s.subs_id=o.subs_id    and o.etime>sysdate     and o.subs_fld_id in (67,12) and o.field_value not in (select code_tt from ktk.partner_tt_not_use@ktkdb2 where status=1 and etime>sysdate)
+                inner join contract@ktkdb2 c1             on c1.CLNT_ID = s.CLNT_ID and c1.etime>sysdate     and trunc(c1.SIGN_DATE,'mm')= add_months(trunc(sysdate,'mm'),-1)  and ABS(c1.SIGN_DATE-su.ACTIVATION_DATE)*24 <= 72  --Сведения об абоненте внесены в WIC в срок не позднее 72 часов с момента активации СП
+                )
                 select dc.client_name "Имя участника программы", dc.client_type_name "Тип клиента", dc.inn "ИНН участника программы",
                         dc.id_series "Серия паспорта", dc.id_number "Номер паспорта", pbp.sender "Номер участника программы",
                         pbp.recipient "Сервисный номер", pbp.receipt_date "Дата регистрации на номер 777", pbp.message_text "Текст сообщения",
-                        ds1.wd_first_date "Дата и время регистрации в WD", ds1.activation_date "Дата и время активации СП", ds1.trpl_name "Тарифный план",
-                        pbpa.bonus "Бонус", ds1.sale_point "Точка продаж", ds1.dlr_name "Наименование Дилера"
+                        ds1.wd_first_date "Дата и время регистрации в WD", ds1.activation_date "Дата и время активации СП", ds1.SIGN_DATE "Дата подписи",
+                        ds1.invcode_name "Номенклатура", ds1.trpl_name "Тарифный план", nvl(pbpa.bonus, 0) "Бонус",
+                        ds1.sale_point "Точка продаж", ds1.dlr_name "Наименование Дилера"
                 from ktk.partner_bonus_program@ktkdb2 pbp
                 inner join ktk_dwh.dim_subscriber ds1 on ds1.msisdn = pbp.message_text
                 inner join ktk_dwh.dim_subscriber ds2 on ds2.msisdn = pbp.sender
                 inner join ktk_dwh.dim_client dc on ds2.clnt_id = dc.ext_id
-                left join ktk.partner_bonus_program_ap_log@ktkdb2 pbpa on pbp.sender =  pbpa.sender and receipt_date < date_m
+                left join bonus pbpa on pbp.sender = pbpa.sender and pbp.message_text = pbpa.message_text --and date_m = add_months(trunc(sysdate,'mm'),-1)
                 where trunc(receipt_date) between add_months(trunc(sysdate,'mm'),-1) and last_day(add_months(trunc(sysdate,'mm'),-1)) + 86399/86400
                 '''
         df = conn.get_query(query)
@@ -83,7 +98,7 @@ def start_task():
 today = datetime.datetime.today()
 print('Start: ' + today.strftime("%d.%m.%Y %H:%M:%S"))
 # create object for using DB
-conn = Connector()
+conn = Connector(False)
 # create connection to DB
 conn.create_connection()
 

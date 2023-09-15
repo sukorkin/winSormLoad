@@ -51,7 +51,7 @@ def get_data():
         join usi_add ua on uh.usi_id = ua.usi_id
         where ua.usi_fld_id = 14 and ua.value is not null
         and uh.usi_status_id = 7
-        and uh.stime between trunc(sysdate, 'D')-7 and trunc(sysdate,'D') - 1/86400
+        and uh.stime between trunc(sysdate, 'D') - 7 and trunc(sysdate,'D') - 1/86400
         group by d.dlr_name
         order by 1 desc, 2
     '''

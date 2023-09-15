@@ -29,3 +29,8 @@ dsn = "10.82.0.172/DWH_DWH1"
 host = "10.82.0.172"
 port = 1521
 service_name = "DWH_DWH1"
+# win dwh
+win_dsn = "10.54.193.65/DWHDB"
+win_host = "10.54.193.65"
+win_port = 1521
+win_service_name = "DWHDB"

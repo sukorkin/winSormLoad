@@ -5,16 +5,31 @@ import config
 
 class Connector:
     '''создаем класс для работы с БД'''
-    def __init__(self):
-        '''use your name,pass,host,port and service name to connect db'''
+    # def __init__(self):
+    #     '''use your name,pass,host,port and service name to connect db'''
+    #     self.cursor = None
+    #     self.connection = None
+    #     self.user = config.username
+    #     self.password = config.password
+    #     self.host = config.host
+    #     self.port = config.port
+    #     self.service_name = config.service_name
+    #     self.arraysize = config.arraysize
+
+    def __init__(self, is_win):
         self.cursor = None
         self.connection = None
         self.user = config.username
         self.password = config.password
-        self.host = config.host
-        self.port = config.port
-        self.service_name = config.service_name
         self.arraysize = config.arraysize
+        if is_win:
+            self.host = config.win_host
+            self.port = config.win_port
+            self.service_name = config.win_service_name
+        else:
+            self.host = config.host
+            self.port = config.port
+            self.service_name = config.service_name
 
     def create_connection(self):
         '''this method create connection using init parametrs'''

@@ -8,7 +8,7 @@ from connector import Connector
 
 def start_task():
     def get_full_table(prev_month):
-        fd = open('sql/newReport.sql', 'r', encoding='utf-8')
+        fd = open('sql/newReportWin.sql', 'r', encoding='utf-8')
         query = fd.read().replace('01.01.2020', prev_month.strftime("%d.%m.%Y"))
         fd.close()
         df = conn.get_query(query)
@@ -57,8 +57,8 @@ def start_task():
         worksheet.autofit()
 
     def write_xlsx_file(esim, df, prev_month):
-        rep_name = 'reports/newReport' + '_' + prev_month.strftime("%Y%m") + '.xlsx'
-        # rep_name = 'reports/newReport' + '_' + today.strftime("%Y%m%d_%H%M") + '.xlsx'
+        # rep_name = 'reports/newReportWin' + '_' + prev_month.strftime("%Y%m") + '.xlsx'
+        rep_name = 'reports/newReportWin' + '_' + today.strftime("%Y%m%d_%H%M") + '.xlsx'
         writer = pd.ExcelWriter(rep_name, engine='xlsxwriter')
         create_worksheet(writer, esim, prev_month.strftime('%B %Y'))
         # create_worksheet(writer, df, 'Детали')
@@ -66,7 +66,7 @@ def start_task():
         print('-- Excel file created successful! --')
 
     # today = datetime.date.today()
-    prev_month = today.replace(day=1, month=today.month - 1)
+    prev_month = today.replace(day=1, month=today.month - 2)
     df = get_full_table(prev_month)
     df = prepare_data(df)
     rep = get_report(df)
@@ -76,7 +76,7 @@ def start_task():
 today = datetime.datetime.today()
 print('Start: ' + today.strftime("%d.%m.%Y %H:%M:%S"))
 # create object for using DB
-conn = Connector()
+conn = Connector(True)
 # create connection to DB
 conn.create_connection()
 
