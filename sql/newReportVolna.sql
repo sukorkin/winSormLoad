@@ -410,7 +410,7 @@ union
 select 9 + 26 + 10 num, trpl_name, 'Исходящий голос МН, мин' type, sum(nvl(minuts, duration / 60)) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (5, 119, 120, 121)
+and ct_ext_id in (5, 119, 120, 121, 166, 167)
 --and stype_id = 1
 group by 9 + 26 + 10, trpl_name, 'Исходящий голос МН, мин'
 union
