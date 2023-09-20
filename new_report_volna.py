@@ -67,6 +67,7 @@ def start_task():
 
     # today = datetime.date.today()
     prev_month = today.replace(day=1, month=today.month - 1)
+    # prev_month = today.replace(day=1, month=7, year=2023)
     df = get_full_table(prev_month)
     df = prepare_data(df)
     rep = get_report(df)
