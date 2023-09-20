@@ -5,7 +5,7 @@ from connector import Connector
 
 
 # create object for using DB
-conn = Connector()
+conn = Connector(False)
 
 # create connection to DB
 conn.create_connection()

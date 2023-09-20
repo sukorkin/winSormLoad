@@ -159,7 +159,7 @@ from ktk_dwh.FCT_CALL_CHARGE c
 join ktk_dwh.dim_service s on c.dim_serv_id = s.dim_serv_id
 join ktk_dwh.dim_subscriber sc on c.dim_subs_id = sc.dim_subs_id
 join ktk_dwh.dim_tariff_plan tp on c.dim_trpl_id = tp.dim_trpl_id and tp.trpl_desc = 'B2C'--on c.dim_subs_id = sc.dim_subs_id
-join ktk_dwh.dim_clch_type ct on c.dim_clch_id = ct.dim_clch_id and ct.ext_code = 'CALL_TYPE'  --on c.dim_clch_id = ct.dim_clch_id
+join ktk_dwh.dim_clch_type ct on c.dim_clch_id = ct.dim_clch_id --and ct.ext_code = 'CALL_TYPE'  --on c.dim_clch_id = ct.dim_clch_id
 where sc.client_type_name in ('Абонент B2C', 'Партнер', 'VIP', 'Абонент B2C ( fix )')
 --and s.stype_id = 1
 --and c.time_id = to_date('01.08.2023', 'DD.MM.YYYY')
@@ -231,28 +231,28 @@ union
 select 9 + 5 num, trpl_name, 'Доход голос сверх пакета внутри сети, руб' type, sum(wovat_$) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (2, 114, 131)
+and ct_ext_id in (2, 114)
 and traf_type = 1
 group by 9 + 5, trpl_name, 'Доход голос сверх пакета внутри сети, руб'
 union
 select 9 + 6 num, trpl_name, 'Доход голос сверх пакета моб Крым и КК, руб' type, sum(wovat_$) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118, 126)
+and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118)
 and traf_type = 1
 group by 9 + 6, trpl_name, 'Доход голос сверх пакета моб Крым и КК, руб'
 union
 select 9 + 7 num, trpl_name, 'Доход голос сверх пакета Россия, руб' type, sum(wovat_$) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (4, 104, 107, 117, 125)
+and ct_ext_id in (4, 104, 107, 117, 125, 156, 157, 158, 159, 160)
 and traf_type = 1
 group by 9 + 7, trpl_name, 'Доход голос сверх пакета Россия, руб'
 union
 select 9 + 8 num, trpl_name, 'Доход голос МН, руб' type, sum(wovat_$) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (5, 119, 120, 121, 166, 167)
+and ct_ext_id in (5, 119, 120, 121, 123, 154, 155, 161, 162, 166, 167, 168, 169)
 and traf_type = 1
 group by 9 + 8, trpl_name, 'Доход голос МН, руб'
 union
@@ -368,49 +368,49 @@ union
 select 9 + 26 + 4 num, trpl_name, 'Исходящий голос (нетарифицируемый  внутри сети), мин' type, sum(case when minuts is null then (duration - duration_$) / 60 else minuts - minuts_$ end) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (2, 114, 131)
+and ct_ext_id in (2, 114)
 --and stype_id = 1
 group by 9 + 26 + 4, trpl_name, 'Исходящий голос (нетарифицируемый  внутри сети), мин'
 union
 select 9 + 26 + 5 num, trpl_name, 'Исходящий голос (тарифицируемый  внутри сети), мин' type, sum(nvl(minuts_$, duration_$ / 60)) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (2, 114, 131)
+and ct_ext_id in (2, 114)
 --and stype_id = 1
 group by 9 + 26 + 5, trpl_name, 'Исходящий голос (тарифицируемый  внутри сети), мин'
 union
 select 9 + 26 + 6 num, trpl_name, 'Исходящий голос (нетарифицируемый направление моб.Крым и КК), мин' type, sum(case when minuts is null then (duration - duration_$) / 60 else minuts - minuts_$ end) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118, 126)
+and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118)
 --and stype_id = 1
 group by 9 + 26 + 6, trpl_name, 'Исходящий голос (нетарифицируемый направление моб.Крым и КК), мин'
 union
 select 9 + 26 + 7 num, trpl_name, 'Исходящий голос (тарифицируемый направление моб.Крым и КК), мин' type, sum(nvl(minuts_$, duration_$ / 60)) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118, 126)
+and ct_ext_id in (1, 100, 102, 108, 109, 115, 116, 118)
 --and stype_id = 1
 group by 9 + 26 + 7, trpl_name, 'Исходящий голос (тарифицируемый направление моб.Крым и КК), мин'
 union
 select 9 + 26 + 8 num, trpl_name, 'Исходящий голос нетарифицируемый Россия, мин' type, sum(case when minuts is null then (duration - duration_$) / 60 else minuts - minuts_$ end) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (4, 104, 107, 117, 125)
+and ct_ext_id in (4, 104, 107, 117, 125, 156, 157, 158, 159, 160)
 --and stype_id = 1
 group by 9 + 26 + 8, trpl_name, 'Исходящий голос нетарифицируемый Россия, мин'
 union
 select 9 + 26 + 9 num, trpl_name, 'Исходящий голос тарифицируемый Россия, мин' type, sum(nvl(minuts_$, duration_$ / 60)) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (4, 104, 107, 117, 125)
+and ct_ext_id in (4, 104, 107, 117, 125, 156, 157, 158, 159, 160)
 --and stype_id = 1
 group by 9 + 26 + 9, trpl_name, 'Исходящий голос тарифицируемый Россия, мин'
 union
 select 9 + 26 + 10 num, trpl_name, 'Исходящий голос МН, мин' type, sum(nvl(minuts, duration / 60)) col
 from traffic
 where s_ext_id = 1
-and ct_ext_id in (5, 119, 120, 121, 166, 167)
+and ct_ext_id in (5, 119, 120, 121, 123, 154, 155, 161, 162, 166, 167, 168, 169)
 --and stype_id = 1
 group by 9 + 26 + 10, trpl_name, 'Исходящий голос МН, мин'
 union
