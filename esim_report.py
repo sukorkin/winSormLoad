@@ -37,7 +37,7 @@ from connector import Connector
     
 
 # create object for using DB
-conn = Connector()
+conn = Connector(False)
 
 # create connection to DB
 conn.create_connection()
@@ -88,8 +88,8 @@ def send_report(message, *, xlsx=False):
     start_date = today - timedelta(days=weekday + 7)
     end_date = start_date + timedelta(days=6)
     fromaddr = "Operreport_daily@mobile-win.ru"
-    # toaddr = ['Sergey.Korkin@ic-group.ru']
-    toaddr = ['Sergey.Korkin@ic-group.ru', 'Veranika.Tyan@ic-group.ru']
+    toaddr = ['Sergey.Korkin@ic-group.ru']
+    # toaddr = ['Sergey.Korkin@ic-group.ru', 'Veranika.Tyan@ic-group.ru']
     # toaddr = ['Sergey.Korkin@ic-group.ru', 'Veranika.Tyan@ic-group.ru',
     #           'Aleksandr.Egorov@ic-group.ru', 'Arsen.Nabiev@ic-group.ru',
     #           'Ludmila.Tuchkova@ic-group.ru', 'Ekaterina.Burova@ic-group.ru']
